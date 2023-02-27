@@ -468,47 +468,88 @@ class ClipFront extends LitElement {
     }
   }
 
-  renderImage (image) {
-    let src
-    if (image['image'] !== undefined) {
-      src = `data:image/png;base64, ${image['image']}`
+  renderImage(image) {
+    let src;
+    if (image["image"] !== undefined) {
+      src = `data:image/png;base64, ${image["image"]}`;
     }
     if (image[this.urlColumn] !== undefined) {
-      src = image[this.urlColumn]
+      src = image[this.urlColumn];
     }
-    /*
-    // useful for testing broken images
-    const hashCode = s => s.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)
-
-    const disp =  hashCode(src) % 2 == 0
-    src = (disp ? "" : "sss") +src
-    */
     return html`
-    <figure style="margin:5px;display:table" 
-    style=${'margin:1px; ' + (this.blacklist[src] !== undefined ? 'display:none' : 'display:inline')}>
-     ${this.displaySimilarities ? html`<p>${(image['similarity']).toFixed(4)}</p>` : ``}
-      ${image['caption'] !== undefined
-    ? html`<img src="assets/search.png" class="subTextSearch" @click=${() => { this.text = image['caption']; this.textSearch() }} />` : ``}
-     
-     <img src="assets/image-search.png" class="subImageSearch" @click=${() => {
-    if (image['image'] !== undefined) {
-      this.image = image['image']
-    } else if (image[this.urlColumn] !== undefined) {
-      this.imageUrl = image[this.urlColumn]
-    }
-  }} />
-      <a href="${src}" target="_blank"><img class="pic" src="${src}" alt="${image['caption'] !== undefined ? image['caption'] : ''}""
-      title="${image['caption'] !== undefined ? image['caption'] : ''}"
-      @error=${() => { this.blacklist = { ...this.blacklist, ...{ [src]: true } } }} /></a>
-      
-      ${this.displayCaptions ? html`<figcaption>
-      ${image['caption'] !== undefined && image['caption'].length > 50 &&
-      !this.displayFullCaptions ? image['caption'].substr(0, 50) + '...' : image['caption']}</figcaption>` : ''}
-    
-    
-    </figure>
-    `
+      <figure style="margin:5px;display:table">
+        ${this.displaySimilarities ? html`<p>${image["similarity"].toFixed(4)}</p>` : ""}
+        ${image["caption"] !== undefined
+          ? html`<img
+              src="assets/search.png"
+              class="subTextSearch"
+              @click=${() => {
+                this.text = image["caption"];
+                this.textSearch();
+              }}
+            />`
+          : ""}
+        <img
+          src="assets/image-search.png"
+          class="subImageSearch"
+          @click=${() => {
+            if (image["image"] !== undefined) {
+              this.image = image["image"];
+            } else if (image[this.urlColumn] !== undefined) {
+              this.imageUrl = image[this.urlColumn];
+            }
+            const modal = document.createElement("div");
+            modal.style.cssText = `
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(0, 0, 0, 0.5);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              z-index: 999;
+            `;
+            const img = document.createElement("img");
+            img.src = src;
+            img.style.cssText = `
+              max-height: 90vh;
+              max-width: 90vw;
+              margin: auto;
+              display: block;
+            `;
+            modal.appendChild(img);
+            document.body.appendChild(modal);
+            modal.addEventListener("click", () => {
+              modal.remove();
+            });
+          }}
+        />
+        <img
+          class="pic"
+          src="${src}"
+          alt="${image["caption"] !== undefined ? image["caption"] : ""}"
+          title="${image["caption"] !== undefined ? image["caption"] : ""}"
+          @error=${() => {
+            this.blacklist = { ...this.blacklist, ...{ [src]: true } };
+          }}
+        />
+        ${this.displayCaptions
+          ? html`<figcaption>
+              ${
+                image["caption"] !== undefined &&
+                image["caption"].length > 50 &&
+                !this.displayFullCaptions
+                  ? image["caption"].substr(0, 50) + "..."
+                  : image["caption"]
+              }
+            </figcaption>`
+          : ""}
+      </figure>
+    `;
   }
+  
 
   filterDuplicateUrls (images) {
     const urls = {}
