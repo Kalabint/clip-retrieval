@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rom1504/clip-retrieval.git"
+    "url": "https://github.com/Kalabint/clip-retrieval.git"
   },
   "bin": {
     "clip-retrieval-front": "./server.js"
