@@ -1,4 +1,4 @@
 {
-    "defaultBackend": "https://knn.laion.ai",
-    "defaultIndex": "laion5B-H-14"
+    "defaultBackend": "http://10.10.20.25:1518/",
+    "defaultIndex": "KalaImages"
 }
