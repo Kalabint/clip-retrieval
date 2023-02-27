@@ -468,47 +468,63 @@ class ClipFront extends LitElement {
     }
   }
 
-  renderImage (image) {
-    let src
-    if (image['image'] !== undefined) {
-      src = `data:image/png;base64, ${image['image']}`
-    }
-    if (image[this.urlColumn] !== undefined) {
-      src = image[this.urlColumn]
-    }
-    /*
-    // useful for testing broken images
-    const hashCode = s => s.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)
-
-    const disp =  hashCode(src) % 2 == 0
-    src = (disp ? "" : "sss") +src
-    */
-    return html`
-    <figure style="margin:5px;display:table" 
-    style=${'margin:1px; ' + (this.blacklist[src] !== undefined ? 'display:none' : 'display:inline')}>
-     ${this.displaySimilarities ? html`<p>${(image['similarity']).toFixed(4)}</p>` : ``}
-      ${image['caption'] !== undefined
-    ? html`<img src="assets/search.png" class="subTextSearch" @click=${() => { this.text = image['caption']; this.textSearch() }} />` : ``}
-     
-     <img src="assets/image-search.png" class="subImageSearch" @click=${() => {
-    if (image['image'] !== undefined) {
-      this.image = image['image']
-    } else if (image[this.urlColumn] !== undefined) {
-      this.imageUrl = image[this.urlColumn]
-    }
-  }} />
-      <a href="${src}" target="_blank"><img class="pic" src="${src}" alt="${image['caption'] !== undefined ? image['caption'] : ''}""
-      title="${image['caption'] !== undefined ? image['caption'] : ''}"
-      @error=${() => { this.blacklist = { ...this.blacklist, ...{ [src]: true } } }} /></a>
-      
-      ${this.displayCaptions ? html`<figcaption>
-      ${image['caption'] !== undefined && image['caption'].length > 50 &&
-      !this.displayFullCaptions ? image['caption'].substr(0, 50) + '...' : image['caption']}</figcaption>` : ''}
-    
-    
-    </figure>
-    `
+ renderImage (image) {
+  let src
+  if (image['image'] !== undefined) {
+    src = `data:image/png;base64, ${image['image']}`
   }
+  if (image[this.urlColumn] !== undefined) {
+    src = image[this.urlColumn]
+  }
+  /*
+  // useful for testing broken images
+  const hashCode = s => s.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0)
+
+  const disp =  hashCode(src) % 2 == 0
+  src = (disp ? "" : "sss") +src
+  */
+  return html`
+    <figure style="margin:5px;display:table" 
+      style=${'margin:1px; ' + (this.blacklist[src] !== undefined ? 'display:none' : 'display:inline')}>
+      ${this.displaySimilarities ? html`<p>${(image['similarity']).toFixed(4)}</p>` : ``}
+      ${image['caption'] !== undefined
+        ? html`<img src="assets/search.png" class="subTextSearch" @click=${() => { this.text = image['caption']; this.textSearch() }} />` : ``}
+      <img src="assets/image-search.png" class="subImageSearch" @click=${() => {
+        if (image['image'] !== undefined) {
+          this.image = image['image']
+        } else if (image[this.urlColumn] !== undefined) {
+          this.imageUrl = image[this.urlColumn]
+        }
+        // Create a new image element to display the clicked image
+        const hoverImage = document.createElement('img')
+        hoverImage.src = src
+        hoverImage.style.position = 'fixed'
+        hoverImage.style.top = '50%'
+        hoverImage.style.left = '50%'
+        hoverImage.style.transform = 'translate(-50%, -50%)'
+        hoverImage.style.zIndex = '999'
+        hoverImage.style.maxWidth = '90%'
+        hoverImage.style.maxHeight = '90%'
+        hoverImage.style.boxShadow = '0 0 10px 5px rgba(0, 0, 0, 0.2)'
+        hoverImage.style.borderRadius = '5px'
+        document.body.appendChild(hoverImage)
+        // Remove the image element when the user clicks outside of it
+        hoverImage.addEventListener('click', () => {
+          document.body.removeChild(hoverImage)
+        })
+        document.addEventListener('click', (event) => {
+          if (!hoverImage.contains(event.target)) {
+            document.body.removeChild(hoverImage)
+          }
+        })
+      }} />
+      ${this.displayCaptions ? html`<figcaption>
+        ${image['caption'] !== undefined && image['caption'].length > 50 &&
+        !this.displayFullCaptions ? image['caption'].substr(0, 50) + '...' : image['caption']}
+      </figcaption>` : ''}
+    </figure>
+  `
+}
 
   filterDuplicateUrls (images) {
     const urls = {}
