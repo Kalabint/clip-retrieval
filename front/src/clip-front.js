@@ -497,9 +497,9 @@ class ClipFront extends LitElement {
       this.imageUrl = image[this.urlColumn]
     }
   }} />
-      <img class="pic" src="${src}" alt="${image['caption'] !== undefined ? image['caption'] : ''}"" 
+      <a href="${src}"><img class="pic" src="${src}" alt="${image['caption'] !== undefined ? image['caption'] : ''}""
       title="${image['caption'] !== undefined ? image['caption'] : ''}"
-      @error=${() => { this.blacklist = { ...this.blacklist, ...{ [src]: true } } }} />
+      @error=${() => { this.blacklist = { ...this.blacklist, ...{ [src]: true } } }} /></a>
       
       ${this.displayCaptions ? html`<figcaption>
       ${image['caption'] !== undefined && image['caption'].length > 50 &&
