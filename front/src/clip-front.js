@@ -492,6 +492,9 @@ class ClipFront extends LitElement {
         <img
           src="assets/image-search.png"
           class="subImageSearch"
+        />
+        <img
+          class="pic"
           @click=${() => {
             if (image["image"] !== undefined) {
               this.image = image["image"];
@@ -525,9 +528,6 @@ class ClipFront extends LitElement {
               modal.remove();
             });
           }}
-        />
-        <img
-          class="pic"
           src="${src}"
           alt="${image["caption"] !== undefined ? image["caption"] : ""}"
           title="${image["caption"] !== undefined ? image["caption"] : ""}"
