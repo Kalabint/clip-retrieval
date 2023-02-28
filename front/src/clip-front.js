@@ -467,7 +467,6 @@ class ClipFront extends LitElement {
       console.log('Error: ', error)
     }
   }
-
   renderImage(image) {
     let src;
     if (image["image"] !== undefined) {
@@ -492,15 +491,13 @@ class ClipFront extends LitElement {
         <img
           src="assets/image-search.png"
           class="subImageSearch"
+          @click=${() => {
+            this.textSearch();
+          }}
         />
         <img
           class="pic"
           @click=${() => {
-            if (image["image"] !== undefined) {
-              this.image = image["image"];
-            } else if (image[this.urlColumn] !== undefined) {
-              this.imageUrl = image[this.urlColumn];
-            }
             const modal = document.createElement("div");
             modal.style.cssText = `
               position: fixed;
