@@ -492,7 +492,11 @@ class ClipFront extends LitElement {
           src="assets/image-search.png"
           class="subImageSearch"
           @click=${() => {
-            this.textSearch();
+            if (image["image"] !== undefined) {
+              this.image = image["image"];
+            } else if (image[this.urlColumn] !== undefined) {
+              this.imageUrl = image[this.urlColumn];
+            }
           }}
         />
         <img
