@@ -523,7 +523,11 @@ class ClipFront extends LitElement {
               margin: auto;
               display: block;
             `;
-            modal.appendChild(img);
+            const link = document.createElement("a");
+            link.href = src;
+            link.target = "_blank";
+            link.appendChild(img);
+            modal.appendChild(link);
             document.body.appendChild(modal);
             modal.addEventListener("click", () => {
               modal.remove();
